@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -17,7 +18,7 @@ import org.apache.commons.cli.ParseException;
 public class Bibelgram {
 	public static boolean verbose = false;
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) {
 		Options options = new Options();
 		options.addOption("c", "create", false, "Create the model");
 		options.addOption("g", "generate", false, "Generate the model");
@@ -29,11 +30,20 @@ public class Bibelgram {
 		options.addOption("l", true, "Maximum sentence length (default 100)");
 		options.addOption("s", true, "Generation count (default 10)");
 		options.addOption("t", true, "Maximum tries per sentence (default 10)");
-		options.addOption("u", false, "D'ont output cutoff sentences");
+		options.addOption("u", false, "Don't output cutoff sentences");
 		options.addOption("v", false, "Verbose (default false)");
+		options.addOption("h", "help", false, "Prints this help message");
 
 		CommandLineParser parser = new DefaultParser();
-		CommandLine line = parser.parse(options, args);
+		CommandLine line;
+		
+		try {
+			line = parser.parse(options, args);
+		} catch (ParseException e) {
+			printHelp(options);
+			e.printStackTrace();
+			return;
+		}
 
 		boolean createIndex = false;
 		boolean generateSentences = false;
@@ -88,6 +98,9 @@ public class Bibelgram {
 				break;
 			case "v":
 				verbose = true;
+				break;
+			case "h":
+				printHelp(options);
 				break;
 			default:
 				throw new RuntimeException("Unrecognized option: " + current.getOpt());
@@ -155,5 +168,10 @@ public class Bibelgram {
 
 		// WordSelector firstWord = index.getWordSelector(new String[]{""});
 		// System.out.println("First word probabilities: " + firstWord);
+	}
+	
+	private static void printHelp(Options o) {
+		HelpFormatter help = new HelpFormatter();
+		help.printHelp("java -jar JARNAME <-c|-g> [args...]", o);
 	}
 }
