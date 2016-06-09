@@ -71,6 +71,8 @@ public class Loader {
 			sentence = merge(sentence.split(":"), " :");
 			sentence = merge(sentence.split("\\)"), " ");
 			sentence = merge(sentence.split("\\("), " ");
+			sentence = merge(sentence.split("\u0084"), " ");
+			sentence = merge(sentence.split("\u0094"), " ");
 			sentence = sentence.trim();
 			String[] words = sentence.split("\\s+");
 

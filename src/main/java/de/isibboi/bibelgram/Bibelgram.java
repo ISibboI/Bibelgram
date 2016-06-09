@@ -151,7 +151,7 @@ public class Bibelgram {
 
 				for (int t = 0; t < maxTries; t++) {
 					sentence = Generator.generateRandomSentence(index, maxLength, absoluteJitter, relativeJitter);
-					if (sentence.split(" ").length == maxLength) {
+					if (sentence.split(" |\\.[;:,]").length == maxLength) {
 						continue;
 					} else {
 						System.out.println(sentence);

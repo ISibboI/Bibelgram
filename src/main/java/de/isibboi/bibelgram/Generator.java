@@ -31,6 +31,12 @@ public class Generator {
 
 		words = words.subList(index.getKeySize(), words.size());
 
-		return Loader.merge(words.toArray(type), " ");
+		String result = Loader.merge(words.toArray(type), " ");
+		result = result.replace(" ;", ";");
+		result = result.replace(" :", ":");
+		result = result.replace(" ,", ",");
+		result = result + ".";
+	
+		return result;
 	}
 }
