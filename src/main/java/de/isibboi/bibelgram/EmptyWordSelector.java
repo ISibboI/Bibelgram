@@ -4,6 +4,11 @@ import java.util.Collections;
 import java.util.Random;
 
 public class EmptyWordSelector extends WordSelector {
+	/**
+	 * First EmtpyWordSelector version.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public EmptyWordSelector() {
 		super(Collections.emptyList());
 	}
