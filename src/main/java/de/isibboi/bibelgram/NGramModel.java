@@ -8,33 +8,6 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 public class NGramModel {
-	private static class NGram {
-		String[] _words;
-
-		NGram(final String[] source, final int offset, final int n) {
-			_words = new String[n];
-
-			for (int i = offset; i < offset + n; i++) {
-				_words[i - offset] = source[i];
-			}
-		}
-
-		@Override
-		public boolean equals(final Object o) {
-			if (o instanceof NGram) {
-				NGram n = (NGram) o;
-				return Arrays.equals(_words, n._words);
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public int hashCode() {
-			return Arrays.hashCode(_words);
-		}
-	}
-
 	private final Multiset<NGram> _model = HashMultiset.create();
 	private final int _n;
 
@@ -49,7 +22,7 @@ public class NGramModel {
 	 *            An array of words.
 	 */
 	public void train(final String[] sentence) {
-		for (int i = 0; i < sentence.length - _n; i++) {
+		for (int i = -_n + 1; i < sentence.length; i++) {
 			NGram ngram = new NGram(sentence, i, _n);
 			_model.add(ngram);
 		}
@@ -60,8 +33,16 @@ public class NGramModel {
 	 * @param sentences A collection of sentences.
 	 */
 	public void train(final Collection<String[]> sentences) {
+		System.out.println("Training model...");
+		
 		for (String[] sentence : sentences) {
 			train(sentence);
 		}
+		
+		System.out.println("Trained model successfully");
+	}
+	
+	public NGramIndex buildIndex() {
+		return new NGramIndex(_model);
 	}
 }
