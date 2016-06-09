@@ -24,21 +24,27 @@ public class NGramModel {
 			_model.add(ngram);
 		}
 	}
-	
+
 	/**
 	 * Trains the model with the given sentences.
-	 * @param sentences A collection of sentences.
+	 * 
+	 * @param sentences
+	 *            A collection of sentences.
 	 */
 	public void train(final Collection<String[]> sentences) {
-		System.out.println("Training model...");
-		
+		if (Bibelgram.verbose) {
+			System.out.println("Training model...");
+		}
+
 		for (String[] sentence : sentences) {
 			train(sentence);
 		}
-		
-		System.out.println("Trained model successfully");
+
+		if (Bibelgram.verbose) {
+			System.out.println("Trained model successfully");
+		}
 	}
-	
+
 	public NGramIndex buildIndex() {
 		return new NGramIndex(_model);
 	}

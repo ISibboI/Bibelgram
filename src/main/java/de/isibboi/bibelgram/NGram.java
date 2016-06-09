@@ -1,8 +1,14 @@
 package de.isibboi.bibelgram;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class NGram {
+public class NGram implements Serializable {
+	/**
+	 * First ngram version.
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	String[] _words;
 
 	NGram(final String[] source, final int offset, final int n) {

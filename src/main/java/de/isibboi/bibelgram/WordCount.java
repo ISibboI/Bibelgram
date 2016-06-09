@@ -1,6 +1,13 @@
 package de.isibboi.bibelgram;
 
-public class WordCount implements Comparable<WordCount> {
+import java.io.Serializable;
+
+public class WordCount implements Comparable<WordCount>, Serializable {
+	/**
+	 * First WordCount version.
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	final String _word;
 	final int _count;
 

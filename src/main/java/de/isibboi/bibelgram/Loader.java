@@ -1,8 +1,6 @@
 package de.isibboi.bibelgram;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Loader {
 	public static String merge(String[] parts, String inbetween) {
@@ -28,7 +24,7 @@ public class Loader {
 		return str.toString();
 	}
 
-	public static Collection<String[]> loadBibel(final String path) {
+	public static Collection<String[]> loadBible(final String path) {
 		List<String> lines = new ArrayList<>();
 
 		try (InputStream f = Loader.class.getResourceAsStream(path);) {
@@ -43,7 +39,9 @@ public class Loader {
 			return null;
 		}
 
-		System.out.println("Read " + lines.size() + " lines");
+		if (Bibelgram.verbose) {
+			System.out.println("Read " + lines.size() + " lines");
+		}
 
 		StringBuilder allLines = new StringBuilder();
 
@@ -55,12 +53,16 @@ public class Loader {
 			allLines.append(s).append(' ');
 		});
 
-		System.out.println("Filtered lines size : " + allLines.toString().length());
+		if (Bibelgram.verbose) {
+			System.out.println("Filtered lines size : " + allLines.toString().length());
+		}
 
 		String[] sentences = allLines.toString().split("[\\.!?]");
 		List<String[]> result = new ArrayList<>(sentences.length);
 
-		System.out.println("Created " + sentences.length + " sentences");
+		if (Bibelgram.verbose) {
+			System.out.println("Created " + sentences.length + " sentences");
+		}
 
 		for (String sentence : sentences) {
 			String source = sentence;
@@ -71,15 +73,15 @@ public class Loader {
 			sentence = merge(sentence.split("\\("), " ");
 			sentence = sentence.trim();
 			String[] words = sentence.split("\\s+");
-			
+
 			if (words.length == 0 || words[0].equals("")) {
 				continue;
 			}
-			
+
 			for (int i = 0; i < words.length; i++) {
 				words[i] = words[i].charAt(0) + words[i].substring(1).toLowerCase();
 			}
-			
+
 			result.add(words);
 
 			if (words[0].equals("")) {
@@ -87,7 +89,9 @@ public class Loader {
 			}
 		}
 
-		System.out.println("Loader loaded " + result.size() + " bible sentences");
+		if (Bibelgram.verbose) {
+			System.out.println("Loader loaded " + result.size() + " bible sentences");
+		}
 
 		return result;
 	}
