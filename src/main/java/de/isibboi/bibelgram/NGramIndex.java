@@ -1,6 +1,7 @@
 package de.isibboi.bibelgram;
 
 import java.util.Hashtable;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import com.google.common.collect.Multiset;
@@ -29,9 +30,11 @@ public class NGramIndex {
 		
 		_keySize = keySize;
 		
-		for (WordSelector word : _index.values()) {
-			word.finishBuilding();
+		for (Entry<NGram, WordSelector> word : _index.entrySet()) {
+			word.getValue().finishBuilding(word.getKey());
 		}
+		
+		System.out.println("Generated index successfully");
 	}
 
 	private NGram createKey(String[] words) {
@@ -43,6 +46,7 @@ public class NGramIndex {
 		WordSelector selector = _index.get(key);
 		
 		if (selector == null) {
+			System.out.println("Unknown word sequence: " + key);
 			selector = new EmptyWordSelector();
 		}
 		
@@ -55,6 +59,10 @@ public class NGramIndex {
 	
 	public String selectRandom(String[] words) {
 		return getSelector(words).selectRandom(_random);
+	}
+	
+	public WordSelector getWordSelector(String[] words) {
+		return getSelector(words);
 	}
 	
 	public int getKeySize() {

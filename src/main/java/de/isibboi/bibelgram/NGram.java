@@ -2,27 +2,33 @@ package de.isibboi.bibelgram;
 
 import java.util.Arrays;
 
-
 public class NGram {
 	String[] _words;
 
 	NGram(final String[] source, final int offset, final int n) {
 		_words = new String[n];
-		int i = offset;
-		
-		for (; i < 0 && i < offset + n; i++) {
-			_words[i - offset] = "";
+		int i = 0;
+		boolean empty = true;
+
+		for (; i + offset < 0; i++) {
+			_words[i] = "";
 		}
-		
-		for (; i < n && i < offset + n; i++) {
-			_words[i - offset] = source[i];
+
+		for (; i < n && i + offset < source.length; i++) {
+			_words[i] = source[i + offset];
+			empty = false;
 		}
-		
-		for (; i < offset + n; i++) {
-			_words[i - offset] = "";
+
+		for (; i < n; i++) {
+			_words[i] = "";
+		}
+
+		if (empty) {
+			System.out.println(
+					"Created empty ngram with parameters: " + Arrays.toString(source) + "; " + offset + "; " + n);
 		}
 	}
-	
+
 	public NGram removeLast() {
 		return new NGram(_words, 0, _words.length - 1);
 	}
@@ -40,6 +46,11 @@ public class NGram {
 	@Override
 	public int hashCode() {
 		return Arrays.hashCode(_words);
+	}
+
+	@Override
+	public String toString() {
+		return Arrays.toString(_words);
 	}
 
 	public String getLast() {

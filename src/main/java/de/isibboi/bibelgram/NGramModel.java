@@ -1,9 +1,6 @@
 package de.isibboi.bibelgram;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 

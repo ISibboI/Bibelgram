@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,23 +18,23 @@ public class Loader {
 		if (parts.length == 0) {
 			return "";
 		}
-		
+
 		StringBuilder str = new StringBuilder(parts[0]);
-		
+
 		for (int i = 1; i < parts.length; i++) {
 			str.append(inbetween).append(parts[i]);
 		}
-		
+
 		return str.toString();
 	}
-	
+
 	public static Collection<String[]> loadBibel(final String path) {
 		List<String> lines = new ArrayList<>();
-		
+
 		try (InputStream f = Loader.class.getResourceAsStream(path);) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(f));
+			BufferedReader in = new BufferedReader(new InputStreamReader(f, "iso-8859-1"));
 			String line;
-			
+
 			while ((line = in.readLine()) != null) {
 				lines.add(line);
 			}
@@ -41,9 +42,11 @@ public class Loader {
 			e.printStackTrace();
 			return null;
 		}
-		
+
+		System.out.println("Read " + lines.size() + " lines");
+
 		StringBuilder allLines = new StringBuilder();
-		
+
 		lines.stream().map((String s) -> {
 			int index = s.indexOf(' ', 0);
 			index = s.indexOf(' ', index + 1);
@@ -51,16 +54,41 @@ public class Loader {
 		}).forEach((String s) -> {
 			allLines.append(s).append(' ');
 		});
-		
-		String[] sentences = allLines.toString().split(".");
-		Collection<String[]> result = new ArrayList<>(sentences.length);
-		
-		for (String sentence :sentences) {
+
+		System.out.println("Filtered lines size : " + allLines.toString().length());
+
+		String[] sentences = allLines.toString().split("[\\.!?]");
+		List<String[]> result = new ArrayList<>(sentences.length);
+
+		System.out.println("Created " + sentences.length + " sentences");
+
+		for (String sentence : sentences) {
+			String source = sentence;
 			sentence = merge(sentence.split(";"), " ;");
 			sentence = merge(sentence.split(","), " ,");
-			result.add(sentence.split(" "));
+			sentence = merge(sentence.split(":"), " :");
+			sentence = merge(sentence.split("\\)"), " ");
+			sentence = merge(sentence.split("\\("), " ");
+			sentence = sentence.trim();
+			String[] words = sentence.split("\\s+");
+			
+			if (words.length == 0 || words[0].equals("")) {
+				continue;
+			}
+			
+			for (int i = 0; i < words.length; i++) {
+				words[i] = words[i].charAt(0) + words[i].substring(1).toLowerCase();
+			}
+			
+			result.add(words);
+
+			if (words[0].equals("")) {
+				System.out.println("Created sentence: " + Arrays.toString(words) + " from: " + source);
+			}
 		}
-		
+
+		System.out.println("Loader loaded " + result.size() + " bible sentences");
+
 		return result;
 	}
 }
