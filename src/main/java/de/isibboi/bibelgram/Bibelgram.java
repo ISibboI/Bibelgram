@@ -33,6 +33,7 @@ public class Bibelgram {
 		options.addOption("u", false, "Don't output cutoff sentences");
 		options.addOption("v", false, "Verbose (default false)");
 		options.addOption("h", "help", false, "Prints this help message");
+		options.addOption("p", true, "The prefix");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line;
@@ -56,6 +57,7 @@ public class Bibelgram {
 		int generationCount = 10;
 		int maxTries = 10;
 		boolean outputCutoffSentences = true;
+		String prefix = "";
 
 		Iterator<Option> iter = line.iterator();
 		Option current;
@@ -101,6 +103,9 @@ public class Bibelgram {
 				break;
 			case "h":
 				printHelp(options);
+				break;
+			case "p":
+				prefix = current.getValue();
 				break;
 			default:
 				throw new RuntimeException("Unrecognized option: " + current.getOpt());
@@ -150,7 +155,7 @@ public class Bibelgram {
 				boolean success = false;
 
 				for (int t = 0; t < maxTries; t++) {
-					sentence = Generator.generateRandomSentence(index, maxLength, absoluteJitter, relativeJitter);
+					sentence = Generator.generateRandomSentence(index, maxLength, absoluteJitter, relativeJitter, prefix.split("\\s+"));
 					if (sentence.split(" |\\.[;:,]").length == maxLength) {
 						continue;
 					} else {
