@@ -34,10 +34,11 @@ public class Bibelgram {
 		options.addOption("v", false, "Verbose (default false)");
 		options.addOption("h", "help", false, "Prints this help message");
 		options.addOption("p", true, "The prefix");
+		options.addOption("o", "loader", true, "The loader: bible (default), whatsapp");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line;
-		
+
 		try {
 			line = parser.parse(options, args);
 		} catch (ParseException e) {
@@ -58,6 +59,7 @@ public class Bibelgram {
 		int maxTries = 10;
 		boolean outputCutoffSentences = true;
 		String prefix = "";
+		String loader = "bible";
 
 		Iterator<Option> iter = line.iterator();
 		Option current;
@@ -107,6 +109,9 @@ public class Bibelgram {
 			case "p":
 				prefix = current.getValue();
 				break;
+			case "o":
+				loader = current.getValue();
+				break;
 			default:
 				throw new RuntimeException("Unrecognized option: " + current.getOpt());
 			}
@@ -120,7 +125,19 @@ public class Bibelgram {
 		NGramIndex index;
 
 		if (createIndex) {
-			Collection<String[]> book = Loader.loadBible(pathToBook);
+			Collection<String[]> book;
+
+			switch (loader) {
+			case "bible":
+				book = Loader.loadBible(pathToBook);
+				break;
+			case "whatsapp":
+				book = Loader.loadWhatsApp(pathToBook);
+				break;
+			default:
+				throw new RuntimeException("Unknown loader: " + loader);
+			}
+
 			NGramModel model = new NGramModel(n); // Create bigram model
 			model.train(book);
 			index = model.buildIndex(); // Create index
@@ -155,7 +172,8 @@ public class Bibelgram {
 				boolean success = false;
 
 				for (int t = 0; t < maxTries; t++) {
-					sentence = Generator.generateRandomSentence(index, maxLength, absoluteJitter, relativeJitter, prefix.split("\\s+"));
+					sentence = Generator.generateRandomSentence(index, maxLength, absoluteJitter, relativeJitter,
+							prefix.split("\\s+"));
 					if (sentence.split(" |\\.[;:,]").length == maxLength) {
 						continue;
 					} else {
@@ -174,7 +192,7 @@ public class Bibelgram {
 		// WordSelector firstWord = index.getWordSelector(new String[]{""});
 		// System.out.println("First word probabilities: " + firstWord);
 	}
-	
+
 	private static void printHelp(Options o) {
 		HelpFormatter help = new HelpFormatter();
 		help.printHelp("java -jar JARNAME <-c|-g> [args...]", o);
