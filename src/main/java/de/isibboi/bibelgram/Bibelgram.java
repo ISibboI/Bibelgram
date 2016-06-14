@@ -1,6 +1,7 @@
 package de.isibboi.bibelgram;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -157,8 +158,12 @@ public class Bibelgram {
 			try (ObjectInputStream in = new ObjectInputStream(Bibelgram.class.getResourceAsStream(pathToIndex))) {
 				index = (NGramIndex) in.readObject();
 			} catch (Exception e) {
-				e.printStackTrace();
-				return;
+				try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(pathToIndex)))) {
+					index = (NGramIndex) in.readObject();
+				} catch (Exception e1) {
+					e.printStackTrace();
+					return;
+				}
 			}
 		}
 
