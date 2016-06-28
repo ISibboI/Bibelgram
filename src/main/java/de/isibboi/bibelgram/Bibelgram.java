@@ -155,10 +155,10 @@ public class Bibelgram {
 				System.out.println("Loading index...");
 			}
 
-			try (ObjectInputStream in = new ObjectInputStream(Bibelgram.class.getResourceAsStream(pathToIndex))) {
+			try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(pathToIndex)))) {
 				index = (NGramIndex) in.readObject();
 			} catch (Exception e) {
-				try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(new File(pathToIndex)))) {
+				try (ObjectInputStream in = new ObjectInputStream(Bibelgram.class.getResourceAsStream(pathToIndex))) {
 					index = (NGramIndex) in.readObject();
 				} catch (Exception e1) {
 					e.printStackTrace();
