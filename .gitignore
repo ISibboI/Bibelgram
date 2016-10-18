@@ -10,3 +10,5 @@ buildNumber.properties
 *.ind
 wa-all.txt
 wa-me.txt
+wiki-small.xml
+wiki.xml

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class Loader {
@@ -120,32 +121,58 @@ public class Loader {
 		sourceString = sourceString.replace(',', ' ');
 		sourceString = sourceString.replaceAll("(?<name>[\\sa-zA-Z0-9])\\)", "\\k<name>");
 		sourceString = sourceString.replaceAll("(?<name>\\([\\sa-zA-Z0-9])", "\\k<name>");
-		
+
 		String[] messages = sourceString.split("\"\n\"");
-		
+
 		if (Bibelgram.verbose) {
 			System.out.println("Loaded " + messages.length + " WhatsApp messages");
 		}
-		
+
 		messages[0] = messages[0].substring(2);
-		messages[messages.length - 1] = messages[messages.length - 1].substring(0, messages[messages.length - 1].length() - 1);
-		
+		messages[messages.length - 1] = messages[messages.length - 1].substring(0,
+				messages[messages.length - 1].length() - 1);
+
 		List<String[]> result = new ArrayList<>(messages.length);
-		
+
 		for (String message : messages) {
 			if (message.startsWith("BEGIN:VCARD")) {
 				continue;
 			}
-			
+
 			String[] words = message.split("\\s+");
-			
+
 			if (words.length == 0) {
 				continue;
 			}
-			
+
 			result.add(words);
 		}
-		
+
 		return result;
+	}
+
+	public static Collection<String[]> loadWikipedia(final String path) {
+		StringBuilder source = new StringBuilder();
+
+		try (InputStream f = Loader.class.getResourceAsStream(path);) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(f, "utf-8"));
+			String line;
+			boolean contentStarted = false;
+
+			while ((line = in.readLine()) != null) {
+				if (contentStarted) {
+					source.append("\n").append(line);
+				} else {
+					if (line.contains("</siteinfo>")) {
+						contentStarted = true;
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return Collections.emptyList();
 	}
 }

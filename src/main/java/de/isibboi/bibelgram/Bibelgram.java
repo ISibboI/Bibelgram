@@ -22,7 +22,7 @@ public class Bibelgram {
 	public static void main(String[] args) {
 		Options options = new Options();
 		options.addOption("c", "create", false, "Create the model");
-		options.addOption("g", "generate", false, "Generate the model");
+		options.addOption("g", "generate", false, "Generate sentences");
 		options.addOption("n", true, "Create an n-gram model (default 4)");
 		options.addOption("b", true, "Path to book (default bibel.txt)");
 		options.addOption("i", true, "Path to index (default bibel.ind)");
@@ -35,7 +35,7 @@ public class Bibelgram {
 		options.addOption("v", false, "Verbose (default false)");
 		options.addOption("h", "help", false, "Prints this help message");
 		options.addOption("p", true, "The prefix");
-		options.addOption("o", "loader", true, "The loader: bible (default), whatsapp");
+		options.addOption("o", "loader", true, "The loader: bible (default), whatsapp, wikipedia");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line;
@@ -134,6 +134,9 @@ public class Bibelgram {
 				break;
 			case "whatsapp":
 				book = Loader.loadWhatsApp(pathToBook);
+				break;
+			case "wikipedia":
+				book = Loader.loadWikipedia(pathToBook);
 				break;
 			default:
 				throw new RuntimeException("Unknown loader: " + loader);
