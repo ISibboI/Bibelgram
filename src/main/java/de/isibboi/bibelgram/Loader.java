@@ -197,6 +197,8 @@ public class Loader {
 				}
 
 				complete.append(s);
+			} else {
+				complete.append(" . ");
 			}
 		});
 
