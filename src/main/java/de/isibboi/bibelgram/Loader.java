@@ -221,7 +221,7 @@ public class Loader {
 			sentence = merge(sentence.split("\\("), " ( ");
 			sentence = merge(sentence.split("\u0084"), " ");
 			sentence = merge(sentence.split("\u0094"), " ");
-			sentence = merge(sentence.split("\u00AD"), " ");
+			sentence = merge(sentence.split("\u00AD"), "");
 			sentence = merge(sentence.split("„"), " „ ");
 			sentence = merge(sentence.split("“"), " “ ");
 			sentence = sentence.trim();
