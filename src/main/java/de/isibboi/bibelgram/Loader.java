@@ -10,7 +10,31 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.cache.LoadingCache;
+
 public class Loader {
+	public static List<String> readCompleteFile(final String path, final String charset) {
+		List<String> lines = new ArrayList<>();
+
+		try (InputStream f = Loader.class.getResourceAsStream(path);) {
+			BufferedReader in = new BufferedReader(new InputStreamReader(f, charset));
+			String line;
+
+			while ((line = in.readLine()) != null) {
+				lines.add(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		if (Bibelgram.verbose) {
+			System.out.println("Read " + lines.size() + " lines");
+		}
+
+		return lines;
+	}
+
 	public static String merge(String[] parts, String inbetween) {
 		if (parts.length == 0) {
 			return "";
@@ -26,23 +50,7 @@ public class Loader {
 	}
 
 	public static Collection<String[]> loadBible(final String path) {
-		List<String> lines = new ArrayList<>();
-
-		try (InputStream f = Loader.class.getResourceAsStream(path);) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(f, "iso-8859-1"));
-			String line;
-
-			while ((line = in.readLine()) != null) {
-				lines.add(line);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-		if (Bibelgram.verbose) {
-			System.out.println("Read " + lines.size() + " lines");
-		}
+		List<String> lines = readCompleteFile(path, "iso-8859-1");
 
 		StringBuilder allLines = new StringBuilder();
 
@@ -174,5 +182,70 @@ public class Loader {
 		}
 
 		return Collections.emptyList();
+	}
+
+	public static Collection<String[]> loadBild(final String path) {
+		List<String> lines = readCompleteFile(path, "utf-8");
+		StringBuilder complete = new StringBuilder();
+
+		lines.stream().forEach((String s) -> {
+			s = s.trim();
+			
+			if (s.length() > 0) {
+				if (complete.length() > 0) {
+					complete.append(' ');
+				}
+				
+				complete.append(s);
+			}
+		});
+		
+		String completeStr = complete.toString();
+		completeStr = completeStr.replace("!", "!.");
+		completeStr = completeStr.replace("?", "?.");
+		String[] sentences = completeStr.split("[\\.!?]\\s+");
+		List<String[]> result = new ArrayList<>(sentences.length);
+
+		if (Bibelgram.verbose) {
+			System.out.println("Created " + sentences.length + " sentences");
+		}
+
+		for (String sentence : sentences) {
+			String source = sentence;
+			sentence = sentence.replace(".“", "“.");
+			sentence = sentence.replace("►", "");
+			sentence = merge(sentence.split(";"), " ; ");
+			sentence = merge(sentence.split(","), " , ");
+			sentence = merge(sentence.split(":"), " : ");
+			sentence = merge(sentence.split("\\)"), " ) ");
+			sentence = merge(sentence.split("\\("), " ( ");
+			sentence = merge(sentence.split("\u0084"), " ");
+			sentence = merge(sentence.split("\u0094"), " ");
+			sentence = merge(sentence.split("\u00AD"), " ");
+			sentence = merge(sentence.split("„"), " „ ");
+			sentence = merge(sentence.split("“"), " “ ");
+			sentence = sentence.trim();
+			String[] words = sentence.split("\\s+");
+
+			if (words.length == 0 || words[0].equals("")) {
+				continue;
+			}
+
+			for (int i = 0; i < words.length; i++) {
+				words[i] = words[i].charAt(0) + words[i].substring(1).toLowerCase();
+			}
+
+			result.add(words);
+
+			if (words[0].equals("")) {
+				System.out.println("Created sentence: " + Arrays.toString(words) + " from: " + source);
+			}
+		}
+
+		if (Bibelgram.verbose) {
+			System.out.println("Loader loaded " + result.size() + " bible sentences");
+		}
+
+		return result;
 	}
 }

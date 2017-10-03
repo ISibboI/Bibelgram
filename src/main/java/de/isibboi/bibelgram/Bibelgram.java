@@ -35,7 +35,7 @@ public class Bibelgram {
 		options.addOption("v", false, "Verbose (default false)");
 		options.addOption("h", "help", false, "Prints this help message");
 		options.addOption("p", true, "The prefix");
-		options.addOption("o", "loader", true, "The loader: bible (default), whatsapp, wikipedia");
+		options.addOption("o", "loader", true, "The loader: bible (default), whatsapp, wikipedia, bild");
 
 		CommandLineParser parser = new DefaultParser();
 		CommandLine line;
@@ -137,6 +137,9 @@ public class Bibelgram {
 				break;
 			case "wikipedia":
 				book = Loader.loadWikipedia(pathToBook);
+				break;
+			case "bild":
+				book = Loader.loadBild(pathToBook);
 				break;
 			default:
 				throw new RuntimeException("Unknown loader: " + loader);

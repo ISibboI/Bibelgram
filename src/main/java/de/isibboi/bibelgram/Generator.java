@@ -37,6 +37,15 @@ public class Generator {
 		result = result.replace(" ;", ";");
 		result = result.replace(" :", ":");
 		result = result.replace(" ,", ",");
+		result = result.replace(" )", ")");
+		result = result.replace("( ", "(");
+		result = result.replace(" !.", "!");
+		result = result.replace(" ?.", "?");
+		result = result.replace("„ ", "„");
+		result = result.replace(" “", "“");
+		result = result.replace("“ .", ".“");
+		result = result.replace("“ !", "!“");
+		result = result.replace("“ ?", "?“");
 		result = result + ".";
 	
 		return result;
