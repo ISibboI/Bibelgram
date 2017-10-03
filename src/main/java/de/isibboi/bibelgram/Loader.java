@@ -190,19 +190,22 @@ public class Loader {
 
 		lines.stream().forEach((String s) -> {
 			s = s.trim();
-			
+
 			if (s.length() > 0) {
 				if (complete.length() > 0) {
 					complete.append(' ');
 				}
-				
+
 				complete.append(s);
 			}
 		});
-		
+
 		String completeStr = complete.toString();
 		completeStr = completeStr.replace("!", "!.");
 		completeStr = completeStr.replace("?", "?.");
+		completeStr = completeStr.replace(".“", "“. ");
+		completeStr = completeStr.replace(".»", "». ");
+		completeStr = completeStr.replace('\u00a0', '\u0020');
 		String[] sentences = completeStr.split("[\\.!?]\\s+");
 		List<String[]> result = new ArrayList<>(sentences.length);
 
@@ -212,11 +215,13 @@ public class Loader {
 
 		for (String sentence : sentences) {
 			String source = sentence;
-			sentence = sentence.replace(".“", "“.");
+			sentence = " " + sentence + " ";
 			sentence = sentence.replace("►", "");
-			sentence = merge(sentence.split(";"), " ; ");
-			sentence = merge(sentence.split(","), " , ");
-			sentence = merge(sentence.split(":"), " : ");
+			sentence = sentence.replace("&#39;", "'");
+			sentence = sentence.replace("&amp;", "&");
+			sentence = merge(sentence.split("; "), " ; ");
+			sentence = merge(sentence.split(", "), " , ");
+			sentence = merge(sentence.split(": "), " : ");
 			sentence = merge(sentence.split("\\)"), " ) ");
 			sentence = merge(sentence.split("\\("), " ( ");
 			sentence = merge(sentence.split("\u0084"), " ");
@@ -224,6 +229,8 @@ public class Loader {
 			sentence = merge(sentence.split("\u00AD"), "");
 			sentence = merge(sentence.split("„"), " „ ");
 			sentence = merge(sentence.split("“"), " “ ");
+			sentence = merge(sentence.split("«"), " « ");
+			sentence = merge(sentence.split("»"), " » ");
 			sentence = sentence.trim();
 			String[] words = sentence.split("\\s+");
 

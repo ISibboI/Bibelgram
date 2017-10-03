@@ -39,14 +39,19 @@ public class Generator {
 		result = result.replace(" ,", ",");
 		result = result.replace(" )", ")");
 		result = result.replace("( ", "(");
-		result = result.replace(" !.", "!");
-		result = result.replace(" ?.", "?");
+		result = result + ".";
+		result = result.replaceAll(" ?!\\.", "!");
+		result = result.replaceAll(" ?\\?\\.", "?");
 		result = result.replace("„ ", "„");
 		result = result.replace(" “", "“");
-		result = result.replace("“ .", ".“");
-		result = result.replace("“ !", "!“");
-		result = result.replace("“ ?", "?“");
-		result = result + ".";
+		result = result.replace("“.", ".“");
+		result = result.replaceAll("“ ?!", "!“");
+		result = result.replaceAll("“ ?\\?", "?“");
+		result = result.replace("« ", "«");
+		result = result.replace(" »", "»");
+		result = result.replace("».", ".»");
+		result = result.replaceAll("» ?!", "!»");
+		result = result.replaceAll("» ?\\?", "?»");
 	
 		return result;
 	}
